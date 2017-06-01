@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jit.z.log.mapper.LogMapper" >
+	<select id="findAll" resultType="Log">
+		select * from userOL
+	</select>
+	<insert id="addLog" parameterType="Log">
+	    insert into userOL (userOL_id,userOL_context,userOL_date,userOL_result,userOL_user) 
+	    values(#{userOL_id},#{userOL_context},#{userOL_date},#{userOL_result},#{userOL_user})
+	</insert>
+	
+	</mapper>

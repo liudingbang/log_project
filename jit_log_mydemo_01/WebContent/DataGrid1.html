@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>标题</title>
+<meta charset="UTF-8" />
+<script type="text/javascript" src="easyui/jquery.min.js"></script>
+<script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="easyui/locale/easyui-lang-zh_CN.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="easyui/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="easyui/themes/icon.css" />
+<script type="text/javascript">
+	$(function() {
+		
+		
+		
+		$("#dg").datagrid({
+			fit : true,
+			url : 'logController/findAll.do',
+			fitColumns : true,
+			singleSelect : true,
+			pagination : true,
+			pagePosition : 'bottom',
+			pageSize : 20,
+			toolbar : [ {
+				text : '添加',
+				iconCls : 'icon-add',
+				handler : function() {
+					$("#addDeptForm").form('clear');
+					//$("#addDeptForm).form('clear');
+					$("#addDept").dialog({
+						closed : false,
+						buttons : [ {
+							text : '提交',
+							handler : function() {
+								
+								$.post("logController/addLog.do",$("#addDeptForm").serialize(),function(data){
+									if(data==""||data==null)
+										alert("添加失败，请检查学号是否有重复");
+									else{
+										alert("添加成功!");
+										
+										$("#addDept").dialog({
+											closed:true
+										});
+										
+										$("#dg").datagrid('reload');
+										
+									}
+										
+								});
+							}
+						},{
+							text:'重置',
+							handler:function(){
+								$("#addDeptForm").form('clear');
+								$('#cc').val(id);
+								$('#ss').val(sid);
+								return ;
+							}
+						} ]
+					});
+				}
+			}, {
+				text : '修改',
+				iconCls : 'icon-edit',
+				handler : function() {
+					
+					if($("#dg").datagrid('getSelected')==null){
+						$.messager.alert('修改','请选择所要修改的学生','error');
+					}else{
+						$('#cc').val(id);
+						$('#ss').val(sid);
+					$("#updateDept").dialog({
+						closed : false,
+						buttons : [{
+							text : '提交',
+							handler : function() {
+								$.post("userController/updateUser.do",$("#updateDeptForm").serialize(),function(data){
+									if(data==""||data==null)
+										alert("修改失败，请检查学号是否有重复");
+									else{
+										alert("修改成功!");
+										$("#updateDept").dialog({
+											closed:true
+										});
+										$("#dg").datagrid('reload');
+									}
+										
+								});
+							}
+						},{
+							text:'重置',
+							handler:function(){
+								$("#addDeptForm").form('clear');
+								return ;
+							}
+						} ]
+						
+					});}
+
+				}
+			},{
+				text : '删除',
+				iconCls : 'icon-remove',
+				handler : function() {
+					if($("#dg").datagrid('getSelected')==null){
+						$.messager.alert('删除','请选择你要删除的数据','error');
+						retrun ;
+					}else{
+						$.post("managerOperations/deleteStudent.do?id="+$("#dg").datagrid('getSelected').id);
+						$("#dg").datagrid('reload');
+					}
+					
+				}
+			},'-',{
+				text : '搜索',
+				iconCls : 'icon-search',
+				handler : function() {
+					$("#search").dialog({
+						closed : false,
+						buttons : [ {
+							text : '搜索',
+							handler : function() {
+								
+								$.post("managerOperations/findStudentByIdOrName.do",$("#info").serialize(),function(data){
+									if(data==""||data==null)
+										alert("没有此学生");
+									else{
+										$("#dg").datagrid({
+											fit : true,
+											data: data,
+											fitColumns : true,
+											singleSelect : true,
+											pagination : true,
+											pagePosition : 'bottom',
+											pageSize : 20,
+											toolbar : [ {
+												text : '添加',
+												iconCls : 'icon-add',
+												handler : function() {
+													$("#addDept").dialog({
+														closed : false,
+														buttons : [ {
+															text : '提交',
+															handler : function() {
+																
+																$.post("managerOperations/addStudent.do",$("#addDeptForm").serialize(),function(data){
+																	if(data==""||data==null)
+																		alert("添加失败，请检查学号是否有重复");
+																	else{
+																		alert("添加成功!");
+																		$("#addDept").dialog({
+																			closed:true
+																		});
+																		$("#dg").datagrid('reload');
+																		
+																	}
+																		
+																});
+															}
+														},{
+															text:'重置',
+															handler:function(){
+																$("#addDeptForm").form('clear');
+																return ;
+															}
+														} ]
+													});
+												}
+											}, {
+												text : '修改',
+												iconCls : 'icon-edit',
+												handler : function() {
+													if($("#dg").datagrid('getSelected')==null){
+														$.messager.alert('修改','请选择所要修改的学生','error');
+													}else{
+													$("#updateDept").dialog({
+														closed : false,
+														buttons : [{
+															text : '提交',
+															handler : function() {
+																$.post("managerOperations/updateStudent.do",$("#updateDeptForm").serialize(),function(data){
+																	if(data==""||data==null)
+																		alert("修改失败，请检查学号是否有重复");
+																	else{
+																		alert("修改成功!");
+																		$("#updateDept").dialog({
+																			closed:true
+																		});
+																		$("#dg").datagrid('reload');
+																	}
+																		
+																});
+															}
+														},{
+															text:'重置',
+															handler:function(){
+																$("#addDeptForm").form('clear');
+																return ;
+															}
+														} ]
+														
+													});}
+
+												}
+											},{
+												text : '删除',
+												iconCls : 'icon-remove',
+												handler : function() {
+													if($("#dg").datagrid('getSelected')==null){
+														$.messager.alert('删除','请选择你要删除的数据','error');
+														retrun ;
+													}else{
+														$.post("managerOperations/deleteStudent.do?id="+$("#dg").datagrid('getSelected').id);
+														$("#dg").datagrid('reload');
+													}
+													
+												}
+											}]
+										});
+										
+									}
+										
+								});
+							}
+						} ]
+					})
+				}} ]
+		});
+		
+		
+
+	});
+</script>
+</head>
+<body>
+	<div id="pp" style="background: #efefef; border: 1px solid #ccc;"></div>
+	<table id="dg" style="width: 400px; height: 250px">
+		<thead>
+			<tr>
+				<th data-options="field:'userOL_id',width:100">序号</th>
+				<th data-options="field:'userOL_context',width:100">操作名称</th>
+				<th data-options="field:'userOL_date',width:100" >操作时间</th>
+				<th data-options="field:'userOL_result',width:100">操作结果</th>
+				<th data-options="field:'userOL_user',width:100">操作人</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="addDept" title="添加日志" class="easyui-dialog" closed="true"
+		style="width: 300px; hieght: 600px">
+		<form id="addDeptForm" action="" method="post">
+			<table>
+				<tbody>
+					<!-- <tr>
+						<td><label>序号</label></td>
+						<td><input type="text" required="true"
+							name="id" id="id"></td>
+					</tr> -->
+					<tr>
+						<td><label>操作名称</label></td>
+						<td><input type="text" required="true"
+							name="userOL_context" id="userOL_context"></td>
+					</tr>
+					<!-- <tr>
+						<td><label>操作时间</label></td>
+						<td><input type="datetime" required="true"
+							name="userOL_date" id="userOL_date"></td>
+					</tr> -->
+					<tr>
+						<td><label>操作人</label></td>
+						<td><input type="text" required="true" id="userOL_user"
+							name="userOL_user"></td>
+					</tr>
+					<tr>
+						<td><label>操作结果</label></td>
+						<td><input type="text" required="true"
+							name="userOL_result" id="userOL_result"></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+	<div id="search" title="随机选人"  class="easyui-dialog" closed="true" style="width: 500px; hieght: 500px">
+			<input id="bt" type="button" onclick="action()" value="开始"/><br>
+		
+	</div>
+	<div id="updateDept" title="修改学生信息" class="easyui-dialog" closed="true"
+		style="width: 300px; hieght: 600px">
+		<form id="addDeptForm" action="" method="post">
+			<table>
+				<tbody>
+					<tr>
+						<td><label>id</label></td>
+						<td><input type="text" required="true"
+							name="id" id="id"></td>
+					</tr>
+					<tr>
+						<td><label>姓名</label></td>
+						<td><input type="text" required="true"
+							name="name" id="name"></td>
+					</tr>
+					<tr>
+						<td><label>评分</label></td>
+						<td><input type="text" required="true"
+							name="score" id="score"></td>
+					</tr>
+					<tr>
+						<td><label>评价</label></td>
+						<td><input type="text" required="true"
+							name="evaluate" id="evaluate"></td>
+					</tr>
+					
+				</tbody>
+			</table>
+		</form>
+	</div>
+	
+</body>
+</html>
